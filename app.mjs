@@ -4,6 +4,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import path from 'path'
 import cors from 'cors'
+import morgan from 'morgan'
 
 import projects from './routes/projects.mjs'
 import files from './routes/files.mjs'
@@ -22,6 +23,13 @@ app.use(bodyParser.json({limit: '50mb'})) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' })) // for parsing application/x-www-form-urlencoded
 
 app.use(express.static(path.join(process.cwd(), "public")))
+
+
+// don't show the log when it is test
+if (process.env.NODE_ENV !== 'test') {
+    // use morgan to log at command line
+    app.use(morgan('combined')) // 'combined' outputs the Apache style LOGs
+}
 
 app.use("/projects", projects)
 app.use("/files", files)

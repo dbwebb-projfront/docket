@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS projects (
 
 CREATE TABLE IF NOT EXISTS user_projects (
   email TEXT NOT NULL,
+  api_key TEXT NOT NULL,
   uid TEXT NOT NULL,
   FOREIGN KEY(uid) REFERENCES projects(uid)
 );
