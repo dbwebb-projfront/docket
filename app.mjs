@@ -1,6 +1,7 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import path from 'path'
+import cors from 'cors'
 
 import database from './db/database.mjs'
 
@@ -9,6 +10,7 @@ const app = express()
 app.disable('x-powered-by')
 
 app.set("view engine", "ejs")
+app.use(cors())
 
 const port = process.env.PORT || 8666
 
