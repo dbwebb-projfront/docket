@@ -1,9 +1,12 @@
+import 'dotenv/config'
+
 import express from 'express'
 import bodyParser from 'body-parser'
 import path from 'path'
 import cors from 'cors'
 
-import database from './db/database.mjs'
+import projects from './routes/projects.mjs'
+import files from './routes/files.mjs'
 
 const app = express()
 
@@ -19,6 +22,9 @@ app.use(bodyParser.json({limit: '50mb'})) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' })) // for parsing application/x-www-form-urlencoded
 
 app.use(express.static(path.join(process.cwd(), "public")))
+
+app.use("/projects", projects)
+app.use("/files", files)
 
 app.get('/', (req, res) => res.redirect('/documentation.html'))
 
