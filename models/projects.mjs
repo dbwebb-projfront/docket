@@ -49,5 +49,66 @@ export default {
         message: error.message,
       }}
     }
-  }
+  },
+
+  addUserToProject: async function addUserToProject(uid, newEmail, email, apiKey) {
+    const db = await database.openDb()
+
+    try {
+      const project = await db.get(
+        `SELECT up.* FROM projects p 
+        INNER JOIN user_projects up ON p.uid = up.uid 
+        WHERE up.email = ? AND up.api_key = ? AND p.uid = ?`,
+        email,
+        apiKey,
+        uid,
+      )
+
+      if (project === undefined) {
+        return {
+          errors: {
+            status: 401,
+            title: "Not Authorized",
+            message: "You do not have access to this project.",
+          }
+        }
+      }
+
+      const user = await db.get(
+        `SELECT * FROM user_projects
+        WHERE email = ? AND api_key = ? AND uid = ?`,
+        newEmail,
+        apiKey,
+        uid,
+      )
+
+      if (user) {
+        return {
+          data: {
+            message: "User already part of project.",
+            status: 200,
+          }
+        }
+      }
+
+      await db.run(
+        `INSERT INTO user_projects (uid, email, api_key) VALUES (?, ?, ?)`,
+        uid,
+        newEmail,
+        apiKey,
+      )
+      
+      return {
+        data: {
+          uid: uid,
+          email: newEmail,
+        }        
+      }      
+    } catch (error) {
+      return { errors: {
+        title: "Database error",
+        message: error.message,
+      }}
+    }
+  },
 }
