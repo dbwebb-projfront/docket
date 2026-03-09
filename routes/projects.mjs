@@ -40,7 +40,7 @@ router.post("/add_user",
       return res.status(results.errors.status || 500).json({ data: results })
     }
 
-    return res.status(results.data.status || 201).json({ data: results })
+    return res.status(results.status || 201).json({ data: results })
   }
 )
 

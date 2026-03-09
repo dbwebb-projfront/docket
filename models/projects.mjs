@@ -84,10 +84,8 @@ export default {
 
       if (user) {
         return {
-          data: {
-            message: "User already part of project.",
-            status: 200,
-          }
+          message: "User already part of project.",
+          status: 200,
         }
       }
 
@@ -99,10 +97,8 @@ export default {
       )
       
       return {
-        data: {
-          uid: uid,
-          email: newEmail,
-        }        
+        uid: uid,
+        email: newEmail,   
       }      
     } catch (error) {
       return { errors: {
