@@ -21,6 +21,43 @@ export default {
     }
   },
 
+  getProject: async function getProject(email, apiKey, uid) {
+    const db = await database.openDb()
+
+    try {
+      const project = await db.get(
+        `SELECT p.* FROM projects p 
+        INNER JOIN user_projects up ON p.uid = up.uid 
+        WHERE up.email = ? AND up.api_key = ? AND p.uid = ?`,
+        email,
+        apiKey,
+        uid,
+      )
+
+      if (project === undefined) {
+        return { errors: {
+          title: "No Access",
+          message: "You do not have access to the project.",
+          status: 401,
+        }}
+      }
+
+      const projectFiles = await db.all(
+        `SELECT * FROM files WHERE uid = ?`,
+        uid,
+      )
+
+      project.files = projectFiles
+
+      return project
+    } catch (error) {
+      return { errors: {
+        title: "Database error",
+        message: error.message,
+      }}
+    }
+  },
+
   createProject: async function createProject(name, email, apiKey) {
     const db = await database.openDb()
 

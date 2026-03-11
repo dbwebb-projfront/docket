@@ -18,6 +18,19 @@ router.get("/",
   }
 )
 
+router.get("/:uid",
+  (req, res, next) => auth.checkToken(req, res, next),
+  async (req, res) => {
+    const result = await projectsModel.getProject(req.user.email, req.user.api_key, req.params.uid)
+
+    if ("errors" in result) {
+      return res.status(result.errors.status || 500).json({ data: result })
+    }
+
+    return res.json({ data: result })
+  }
+)
+
 router.post("/",
   (req, res, next) => auth.checkToken(req, res, next),
   async (req, res) => {
