@@ -43,7 +43,7 @@ export default {
       }
 
       const projectFiles = await db.all(
-        `SELECT * FROM files WHERE uid = ?`,
+        `SELECT * FROM files WHERE project_uid = ?`,
         uid,
       )
 

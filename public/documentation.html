@@ -150,7 +150,38 @@ const result = await response.json()</code>
 
       <section id="Documents">
         <h2>Project files</h2>
-        
+
+                <h3>Create file in project</h3>
+        <pre class="lager">POST /files</pre>
+
+        <p>Code example</p>
+        <pre>
+          <code class="javascript">const response = await fetch("https://docket.emilfolino.se/projects", {
+  body: JSON.stringify({
+    filename: "style.css",
+    project_uid: "fb5a74fe51f39e0df0f928d7cd98445b",
+  }),
+  method: "POST",
+  headers: {
+    'content-type': 'application/json',
+    'x-access-token': [TOKEN],
+  },
+})
+const result = await response.json()</code>
+</pre>
+
+        <p>Result:</p>
+        <pre class="lager">{
+  "data": {
+    "filename": "style.css",
+    "uid": "0f784d640ac6ae249823efd991655444",
+    "project_uid": "fb5a74fe51f39e0df0f928d7cd98445b",
+    "content": ""
+  }
+}</pre>
+
+      <h3>Update file through socket</h3>
+
       </section>
     </main>
 
