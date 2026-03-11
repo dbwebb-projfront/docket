@@ -1,15 +1,23 @@
 import 'dotenv/config'
 
 import express from 'express'
+import { createServer } from 'node:http'
 import bodyParser from 'body-parser'
 import path from 'path'
 import cors from 'cors'
 import morgan from 'morgan'
+import { Server } from 'socket.io'
 
 import projects from './routes/projects.mjs'
 import files from './routes/files.mjs'
 
 const app = express()
+const server = createServer(app)
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+    }
+})
 
 app.disable('x-powered-by')
 
@@ -36,4 +44,9 @@ app.use("/files", files)
 
 app.get('/', (req, res) => res.redirect('/documentation.html'))
 
-app.listen(port, () => console.log('Order api listening on port ' + port))
+// Socket handling
+io.on('connection', (socket) => {
+  console.log('a user connected')
+})
+
+server.listen(port, () => console.log('Order api listening on port ' + port))
