@@ -47,13 +47,10 @@ app.get('/', (req, res) => res.redirect('/documentation.html'))
 // Socket handling
 io.on('connection', (socket) => {
   socket.on("open file", (uid) => {
-    console.log("open", uid)
     socket.join(uid)
   })
 
   socket.on("new content", (data) => {
-    console.log("data", data)
-
     io.to(data.uid).emit("new content", data)
   })
 })
