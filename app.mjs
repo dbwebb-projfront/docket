@@ -50,8 +50,9 @@ io.on('connection', (socket) => {
     socket.join(uid)
   })
 
-  socket.on("new content", (data) => {
-    io.to(data.uid).emit("new content", data)
+  socket.on("content", (data) => {
+    console.log("content", data)
+    io.to(data.uid).emit("content", data)
   })
 })
 
