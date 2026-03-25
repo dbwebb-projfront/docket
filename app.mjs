@@ -6,7 +6,6 @@ import bodyParser from 'body-parser'
 import path from 'path'
 import cors from 'cors'
 import morgan from 'morgan'
-import hat from 'hat'
 import { Server } from 'socket.io'
 
 import projects from './routes/projects.mjs'
@@ -45,16 +44,26 @@ app.use("/files", files)
 
 app.get('/', (req, res) => res.redirect('/documentation.html'))
 
+
+
 // Socket handling
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  
+  console.log(token)
+})
+
+
+
 io.on('connection', (socket) => {
   console.log(socket.id)
 
   socket.on("open file", (uid) => {
+
     socket.join(uid)    
   })
 
   socket.on("content", (data) => {
-    console.log("content", data)
     io.to(data.uid).emit("content", data)
   })
 

@@ -1,12 +1,12 @@
 import express from "express"
 const router = express.Router()
 
-import auth from '../models/auth.mjs'
+import { checkToken } from '../models/auth.mjs'
 import projectsModel from "../models/projects.mjs"
 
 
 router.get("/",
-  (req, res, next) => auth.checkToken(req, res, next),
+  (req, res, next) => checkToken(req, res, next),
   async (req, res) => {
     const results = await projectsModel.getProjects(req.user.email, req.user.api_key)
 
@@ -19,7 +19,7 @@ router.get("/",
 )
 
 router.get("/:uid",
-  (req, res, next) => auth.checkToken(req, res, next),
+  (req, res, next) => checkToken(req, res, next),
   async (req, res) => {
     const result = await projectsModel.getProject(req.user.email, req.user.api_key, req.params.uid)
 
@@ -32,7 +32,7 @@ router.get("/:uid",
 )
 
 router.post("/",
-  (req, res, next) => auth.checkToken(req, res, next),
+  (req, res, next) => checkToken(req, res, next),
   async (req, res) => {
     const results = await projectsModel.createProject(req.body.name, req.user.email, req.user.api_key)
 
@@ -45,7 +45,7 @@ router.post("/",
 )
 
 router.post("/add_user",
-  (req, res, next) => auth.checkToken(req, res, next),
+  (req, res, next) => checkToken(req, res, next),
   async (req, res) => {
     const results = await projectsModel.addUserToProject(req.body.email, req.body.uid, req.user.email, req.user.api_key)
 
