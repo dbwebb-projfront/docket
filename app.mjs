@@ -11,6 +11,8 @@ import { Server } from 'socket.io'
 import projects from './routes/projects.mjs'
 import files from './routes/files.mjs'
 
+import filesModel from './models/files.mjs'
+
 import { verifyToken } from './models/auth.mjs'
 
 const app = express()
@@ -59,12 +61,17 @@ io.use((socket, next) => {
 
 
 io.on('connection', (socket) => {
-  socket.on("open file", (uid) => {
+  socket.on("open file", async (uid) => {
     const decoded = verifyToken(socket.handshake.auth.token)
 
-    console.log(decoded)
+    const user = await filesModel.checkFileAccess(uid, decoded.email, decoded.api_key)
 
-    socket.join(uid)    
+    if (user) {
+      // handle adding users
+
+      socket.join(uid)
+      io.to(uid).emit("file loaded", uid)
+    }      
   })
 
   socket.on("close file", (uid) => {
