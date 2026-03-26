@@ -11,6 +11,8 @@ import { Server } from 'socket.io'
 import projects from './routes/projects.mjs'
 import files from './routes/files.mjs'
 
+import { verifyToken } from './models/auth.mjs'
+
 const app = express()
 const server = createServer(app)
 const io = new Server(server, {
@@ -48,19 +50,25 @@ app.get('/', (req, res) => res.redirect('/documentation.html'))
 
 // Socket handling
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token;
+  const token = socket.handshake.auth.token
   
-  console.log(token)
+  if (verifyToken(token)) {
+    next()
+  }
 })
 
 
-
 io.on('connection', (socket) => {
-  console.log(socket.id)
-
   socket.on("open file", (uid) => {
+    const decoded = verifyToken(socket.handshake.auth.token)
+
+    console.log(decoded)
 
     socket.join(uid)    
+  })
+
+  socket.on("close file", (uid) => {
+
   })
 
   socket.on("content", (data) => {

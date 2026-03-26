@@ -2,8 +2,8 @@ import database from "../db/database.mjs"
 import hat from "hat"
 
 export default {
-  createFile: async function createFile(filename, project_uid, email, apiKey) {
-        const db = await database.openDb()
+  createFile: async function createFile(filename, projectUID, email, apiKey) {
+    const db = await database.openDb()
 
     try {
       const project = await db.get(
@@ -12,7 +12,7 @@ export default {
         WHERE up.email = ? AND up.api_key = ? AND p.uid = ?`,
         email,
         apiKey,
-        project_uid,
+        projectUID,
       )
 
       if (project === undefined) {
@@ -26,7 +26,7 @@ export default {
       const fileObject = {
         filename: filename,
         uid: hat(),
-        project_uid: project_uid,
+        project_uid: projectUID,
         content: "",
       }
 
@@ -45,5 +45,24 @@ export default {
         message: error.message,
       }}
     }
+  },
+
+  checkFileAccess: async function checkFileAccess(fileUID, email, apiKey) {
+    const db = await database.openDb()
+
+    const user = await db.get(
+      `SELECT up.email FROM user_projects up 
+        INNER JOIN files f ON f.project_uid = up.uid
+        WHERE up.email = ? AND up.api_key = ? AND f.uid = ?`,
+      email,
+      apiKey,
+      fileUID,
+    )
+
+    if (user) {
+      return true
+    }
+
+    return false
   }
 }

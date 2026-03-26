@@ -3,9 +3,9 @@ import jwt from "jsonwebtoken";
 function verifyToken(token) {
   if (token) {
     try {
-      let decoded = jwt.verify(token, process.env.JWT_SECRET)
+      const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-      return true
+      return decoded
     } catch (error) {
       console.error(error)
       return false 
