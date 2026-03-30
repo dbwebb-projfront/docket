@@ -30,6 +30,8 @@ app.use(cors())
 
 const port = process.env.PORT || 8166
 
+let fileUsers = {}
+
 
 app.use(bodyParser.json({limit: '50mb'})) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' })) // for parsing application/x-www-form-urlencoded
@@ -64,18 +66,35 @@ io.on('connection', (socket) => {
   socket.on("open file", async (uid) => {
     const decoded = verifyToken(socket.handshake.auth.token)
 
-    const user = await filesModel.checkFileAccess(uid, decoded.email, decoded.api_key)
+    const hasAccess = await filesModel.checkFileAccess(uid, decoded.email, decoded.api_key)
 
-    if (user) {
-      // handle adding users
-
+    if (hasAccess) {
       socket.join(uid)
       io.to(uid).emit("file loaded", uid)
+
+      // handle adding users
+      if (!fileUsers[uid]) {
+        fileUsers[uid] = []
+      }
+
+      fileUsers[uid].push(decoded.email)
+
+      io.to(uid).emit("users", fileUsers[uid])
     }      
   })
 
-  socket.on("close file", (uid) => {
+  socket.on("disconnect", () => {
+    const decoded = verifyToken(socket.handshake.auth.token)
+     
+    for(let file in fileUsers) {
+      fileUsers[file] = fileUsers[file].filter((item) => item !== decoded.email)
+    }
+  })
 
+  socket.on("close file", (uid) => {
+    const decoded = verifyToken(socket.handshake.auth.token)
+
+    fileUsers[uid] = fileUsers[uid].filter((item) => item !== decoded.email)
   })
 
   socket.on("content", (data) => {
