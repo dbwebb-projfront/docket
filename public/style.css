@@ -53,8 +53,13 @@ pre.lager {
     overflow-x: auto;
 }
 
-code.javascript {
+code {
     font-size: 1rem;
+    margin-bottom: 1.4rem;
+    background-color: #333;
+    color: white;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
 }
 
 h1 {
@@ -126,7 +131,9 @@ input[type=submit] {
     padding: 1.4rem;
     background: #eaa;
     border-left: 3px solid #c55;
+    margin-bottom: 1.4rem;
 }
+
 
 @media (min-width: 980px) {
     main {

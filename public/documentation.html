@@ -22,10 +22,17 @@
     </header>
 
     <main class="content">
+      <section id="warning" class="error">
+        <h3>Subject to changes</h3>
+        <p>This documentation is subject to changes during the spring of 2026.</p>
+      </section>
+
+
       <section id="toc">
         <ol>
           <li><a href="#projects">Projects</a></li>
           <li><a href="#files">Project Files</a></li>
+          <li><a href="#socket">Socket</a></li>
         </ol>
       </section>
 
@@ -180,7 +187,64 @@ const result = await response.json()</code>
   }
 }</pre>
 
-      <h3>Update file through socket</h3>
+      </section>
+
+      <section id="socket">
+        <h2>Socket</h2>
+
+        <p>For all socket-endpoints a valid token from auth.emilfolino.se should be attached like the endpoints above. The following code example shows how to attach the token.</p>
+        <pre>
+          <code class="javascript">// src/models/socket.js
+import { io } from "socket.io-client"
+import auth from "./auth.js"
+
+const URL = "https://docket.emilfolino.se"
+
+export const socket = io(URL, {
+  auth: {
+    token: auth.token
+  }
+})</code>
+</pre>
+
+      <h3>Open a file</h3>
+
+      <p>To create a <a href="https://socket.io/docs/v4/rooms/" target="_blank">socket.io-room</a> emit a <code>load file</code>-event from the client containing the file uid.</p>
+      <pre><code class="javascript">socket.emit('open file', uid)</code></pre>
+
+      <p>Two events will be emitted from the server to the specific room after a file is opened by any client. A <code>file loaded</code>-event and a <code>users</code>-event with an updated users list.</p>
+
+      <h3>Close a file</h3>
+
+      <p>To leave the room and close the file, emit a <code>close file</code>-event.</p>
+      <pre><code class="javascript">socket.emit('close file', uid)</code></pre>
+
+      <p>A <code>users</code>-event will be send to all remaining clients with the remaining users.</p>
+
+
+      <h3>Updating content</h3>
+
+      <p>To update content from the client send an emit with the <code>content</code>-event.</p>
+      
+              <pre>
+          <code class="javascript">socket.emit("content", { 
+  data: contentData,
+  uid: uid,
+})</code></pre>
+
+      <p>The data is broadcasted back to all clients in the room using the same <code>content</code>-event.</p>
+
+      <h3>Selection</h3>
+
+      <p>To send updates for selection, send an emit with the <code>selection</code>-event.</p>
+
+                    <pre>
+          <code class="javascript">socket.emit('selection', { 
+  data: selectionData,
+  uid: uid,
+})</code></pre>
+      
+        <p>The data is broadcasted back to all clients in the room using the same <code>selection</code>-event.</p>
 
       </section>
     </main>
