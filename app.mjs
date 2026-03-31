@@ -104,7 +104,11 @@ io.on('connection', (socket) => {
 
     clearTimeout(throttleTimeout)
     throttleTimeout = setTimeout(async () => {
-      
+      const result = await filesModel.updateFileContent(data.uid, data.content)
+
+      if (result) {
+        io.to(data.uid).emit("content saved", data)
+      }
     }, 2000)
   })
 

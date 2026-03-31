@@ -80,19 +80,44 @@ export default {
   checkFileAccess: async function checkFileAccess(fileUID, email, apiKey) {
     const db = await database.openDb()
 
-    const user = await db.get(
-      `SELECT up.email FROM user_projects up 
-        INNER JOIN files f ON f.project_uid = up.uid
-        WHERE up.email = ? AND up.api_key = ? AND f.uid = ?`,
-      email,
-      apiKey,
-      fileUID,
-    )
+    try {
+      const user = await db.get(
+        `SELECT up.email FROM user_projects up 
+          INNER JOIN files f ON f.project_uid = up.uid
+          WHERE up.email = ? AND up.api_key = ? AND f.uid = ?`,
+        email,
+        apiKey,
+        fileUID,
+      )
 
-    if (user) {
-      return true
+      if (user) {
+        return true
+      }
+
+      return false
+    } catch (error) {
+      console.error(error)
+      return false
     }
+  },
 
-    return false
+  updateFileContent: async function updateFileContent(fileUID, content) {
+    if (this.checkFileAccess) {
+      const db = await database.openDb()
+
+      try {
+        const result = await db.run(
+          `UPDATE files SET content = ? WHERE uid = ?`,
+          content,
+          fileUID, 
+        )
+
+        return result.changes
+      } catch (error) {
+        console.error(error)
+
+        return false
+      }
+    }    
   }
 }
