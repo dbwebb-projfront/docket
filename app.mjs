@@ -15,6 +15,8 @@ import filesModel from './models/files.mjs'
 
 import { verifyToken } from './models/auth.mjs'
 
+let throttleTimeout = null
+
 const app = express()
 const server = createServer(app)
 const io = new Server(server, {
@@ -99,6 +101,11 @@ io.on('connection', (socket) => {
 
   socket.on("content", (data) => {
     io.to(data.uid).emit("content", data)
+
+    clearTimeout(throttleTimeout)
+    throttleTimeout = setTimeout(async () => {
+      
+    }, 2000)
   })
 
   socket.on("selection", (data) => {
