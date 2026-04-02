@@ -20,7 +20,7 @@ router.get("/:uid",
 router.post("/",
   (req, res, next) => checkToken(req, res, next),
   async (req, res) => {
-    const results = await filesModel.createFile(req.body.filename, req.body.project_uid, req.user.email, req.user.api_key)
+    const results = await filesModel.createFile(req.body.filename, req.body.project_uid, req.body.parent_file, req.user.email, req.user.api_key)
 
     if ("errors" in results) {
       return res.status(results.errors.status || 500).json({ data: results })

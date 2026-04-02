@@ -32,7 +32,7 @@ export default {
     }
   },
 
-  createFile: async function createFile(filename, projectUID, email, apiKey) {
+  createFile: async function createFile(filename, projectUID, parent=null, email, apiKey) {
     const db = await database.openDb()
 
     try {
@@ -55,15 +55,17 @@ export default {
 
       const fileObject = {
         filename: filename,
+        parent_file: parent,
         uid: hat(),
         project_uid: projectUID,
         content: "",
       }
 
       await db.run(
-        `INSERT INTO files (filename, uid, project_uid)
-        VALUES (?, ?, ?)`,
+        `INSERT INTO files (filename, parent_file, uid, project_uid)
+        VALUES (?, ?, ?, ?)`,
         fileObject.filename,
+        fileObject.parent_file,
         fileObject.uid,
         fileObject.project_uid,
       )
