@@ -49,6 +49,13 @@ export default {
 
       project.files = projectFiles
 
+      const projectUsers = await db.all(
+        `SELECT email FROM user_projects WHERE uid = ?`,
+        uid,
+      )
+
+      project.users = projectUsers
+
       return project
     } catch (error) {
       return { errors: {

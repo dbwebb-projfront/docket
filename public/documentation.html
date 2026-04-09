@@ -45,6 +45,14 @@
       <section id="projects">
         <h2>Projects</h2>
 
+        <p>All projects have the following attributes:</p>
+        <ul>
+          <li>uid - unique identifier for project</li>
+          <li>name</li>
+          <li>files - containing the files of a project</li>
+          <li>users - containing the users with permissions to a project</li>
+        </ul>
+
         <h3>Get all projects</h3>
         <pre class="lager">GET /projects</pre>
 
@@ -72,7 +80,7 @@ const result = await response.json()</code>
   ]
 }</pre>
 
-        <h3>Get project and all associated files</h3>
+        <h3>Get project and all associated files and users</h3>
         <pre class="lager">GET /projects/:uid</pre>
 
         <p>Code example</p>
@@ -96,6 +104,11 @@ const result = await response.json()</code>
                 "uid": "fb5a74fe51f39e0df0f928d7cd98445b",
                 "parent_file": null,
                 "content": "console.log('docket')"
+            }
+        ],
+        "users": [
+            {
+                "email": "efo@bth.se"
             }
         ]
     }
@@ -158,12 +171,21 @@ const result = await response.json()</code>
       <section id="files">
         <h2>Project files</h2>
 
+        <p>All files have the following attributes:</p>
+        <ul>
+          <li>uid - unique identifier for the file</li>
+          <li>project_uid - unique identifier for the project that contains the file</li>
+          <li>filename</li>
+          <li>parent_file - contains a uid of another file, to create nested file trees</li>
+          <li>content - contents of the file</li>
+        </ul>
+
                 <h3>Create file in project</h3>
         <pre class="lager">POST /files</pre>
 
         <p>Code example</p>
         <pre>
-          <code class="javascript">const response = await fetch("https://docket.emilfolino.se/projects", {
+          <code class="javascript">const response = await fetch("https://docket.emilfolino.se/files", {
   body: JSON.stringify({
     filename: "style.css",
     project_uid: "fb5a74fe51f39e0df0f928d7cd98445b",
