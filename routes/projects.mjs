@@ -47,7 +47,7 @@ router.post("/",
 router.post("/add_user",
   (req, res, next) => checkToken(req, res, next),
   async (req, res) => {
-    const results = await projectsModel.addUserToProject(req.body.email, req.body.uid, req.user.email, req.user.api_key)
+    const results = await projectsModel.addUserToProject(req.body.uid, req.body.email, req.user.email, req.user.api_key)
 
     if ("errors" in results) {
       return res.status(results.errors.status || 500).json({ data: results })
