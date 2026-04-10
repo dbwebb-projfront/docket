@@ -58,16 +58,20 @@ export default {
         parent_file: parent,
         uid: hat(),
         project_uid: projectUID,
+        created_by: email,
+        last_changed: new Date().toISOString(),
         content: "",
       }
 
       await db.run(
-        `INSERT INTO files (filename, parent_file, uid, project_uid)
-        VALUES (?, ?, ?, ?)`,
+        `INSERT INTO files (filename, parent_file, uid, project_uid, created_by, last_changed)
+        VALUES (?, ?, ?, ?, ?, ?)`,
         fileObject.filename,
         fileObject.parent_file,
         fileObject.uid,
         fileObject.project_uid,
+        fileObject.created_by,
+        fileObject.last_changed,
       )
 
       return fileObject
