@@ -151,4 +151,53 @@ export default {
       }}
     }
   },
+
+  deleteProject: async function deleteProject(uid, email, apiKey) {
+    const db = await database.openDb()
+
+    try {
+      const project = await db.get(
+        `SELECT up.* FROM projects p 
+        INNER JOIN user_projects up ON p.uid = up.uid 
+        WHERE up.email = ? AND up.api_key = ? AND p.uid = ?`,
+        email,
+        apiKey,
+        uid,
+      )
+
+      if (project === undefined) {
+        return {
+          errors: {
+            status: 401,
+            title: "Not Authorized",
+            message: "You do not have access to this project.",
+          }
+        }
+      }
+
+      await db.run(
+        `DELETE FROM projects WHERE uid = ?`,
+        uid,
+      )
+
+      await db.run(
+        `DELETE FROM user_projects WHERE uid = ?`,
+        uid,
+      )
+
+      const result = await db.run(
+        `DELETE FROM files WHERE project_uid = ?`,
+        uid,
+      )
+
+      return result
+    } catch (error) {
+      return {
+        errors: {
+          status: 500,
+          message: error.message,
+        }
+      }
+    }      
+  }
 }

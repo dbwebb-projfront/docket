@@ -57,4 +57,17 @@ router.post("/add_user",
   }
 )
 
+router.delete("/",
+  (req, res, next) => checkToken(req, res, next),
+  async (req, res) => {
+    const results = await projectsModel.deleteProject(req.body.uid, req.user.email, req.user.api_key)
+
+    if ("errors" in results) {
+      return res.status(results.errors.status || 500).json({ data: results })
+    }
+
+    return res.status(204).send()
+  }
+)
+
 export default router
