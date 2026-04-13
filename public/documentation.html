@@ -182,7 +182,7 @@ const result = await response.json()</code>
           <li>last_changed - ISO8601 string with datetime</li>
         </ul>
 
-                <h3>Create file in project</h3>
+        <h3>Create file in project</h3>
         <pre class="lager">POST /files</pre>
 
         <p>Code example</p>
@@ -214,6 +214,26 @@ const result = await response.json()</code>
   }
 }</pre>
 
+      <h3>Delete file</h3>
+        <pre class="lager">DELETE /files</pre>
+
+        <p>Code example</p>
+        <pre>
+          <code class="javascript">const response = await fetch("https://docket.emilfolino.se/files", {
+  body: JSON.stringify({
+    uid: "14fa4776c6d78755ad933d6b5ed9fc47",
+  }),
+  method: "DELETE",
+  headers: {
+    'content-type': 'application/json',
+    'x-access-token': [TOKEN],
+  },
+})
+const result = await response.json()</code>
+</pre>
+
+        <p>Result:</p>
+        <pre class="lager">204 No Content</pre>
       </section>
 
       <section id="socket">

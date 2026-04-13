@@ -106,7 +106,8 @@ io.on('connection', (socket) => {
 
     clearTimeout(throttleTimeout)
     throttleTimeout = setTimeout(async () => {
-      const result = await filesModel.updateFileContent(data.uid, data.content)
+      const decoded = verifyToken(socket.handshake.auth.token)
+      const result = await filesModel.updateFileContent(data.uid, data.content, decoded.email, decoded.api_key)
 
       if (result) {
         io.to(data.uid).emit("content saved", data)

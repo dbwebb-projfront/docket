@@ -1,7 +1,7 @@
 import database from "../db/database.mjs"
 import hat from "hat"
 
-export default {
+const auth = {
   getFile: async function getFile(uid, email, apiKey) {
     const db = await database.openDb()
 
@@ -107,8 +107,8 @@ export default {
     }
   },
 
-  updateFileContent: async function updateFileContent(fileUID, content) {
-    if (this.checkFileAccess) {
+  updateFileContent: async function updateFileContent(fileUID, content, email, apiKey) {
+    if (auth.checkFileAccess(fileUID, email, apiKey)) {
       const db = await database.openDb()
 
       try {
@@ -126,5 +126,36 @@ export default {
         return false
       }
     }    
+  },
+
+  deleteFile: async function deleteFile(uid, email, apiKey) {
+    if (auth.checkFileAccess(uid, email, apiKey)) {
+      const db = await database.openDb()
+
+      try {
+        const result = await db.run(
+          `DELETE FROM files WHERE uid = ?`,
+          uid,
+        )
+
+        return result
+      } catch (error) {
+        return {
+          errors: {
+            status: 500,
+            message: error.message,
+          }
+        }
+      }      
+    } else {
+      return {
+        errors: {
+          status: 401,
+          message: "You do not have access to this file."
+        }
+      }
+    }
   }
 }
+
+export default auth
