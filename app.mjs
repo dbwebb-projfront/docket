@@ -60,6 +60,8 @@ io.use((socket, next) => {
   
   if (verifyToken(token)) {
     next()
+  } else {
+    next(new Error("Token is not valid."))
   }
 })
 

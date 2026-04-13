@@ -113,9 +113,10 @@ export default {
 
       try {
         const result = await db.run(
-          `UPDATE files SET content = ? WHERE uid = ?`,
+          `UPDATE files SET content = ?, last_changed = ? WHERE uid = ?`,
           content,
-          fileUID, 
+          new Date().toISOString(),
+          fileUID,
         )
 
         return result.changes
