@@ -159,13 +159,27 @@ const result = await response.json()</code>
 const result = await response.json()</code>
 </pre>
 
+      <h3>Remove user to project</h3>
+            <pre class="lager">POST /projects/add_user</pre>
+
+            <p>Code example</p>
+            <pre>
+              <code class="javascript">const response = await fetch("https://docket.emilfolino.se/projects/remove_user", {
+      body: JSON.stringify({
+        uid: "296c53801cccf467a7afe4f10fc496e3",
+        email: "mos@bth.se",
+      }),
+      method: "DELETE",
+      headers: {
+        'content-type': 'application/json',
+        'x-access-token': [TOKEN],
+      },
+    })
+    </code>
+    </pre>
+
         <p>Result:</p>
-        <pre class="lager">{
-    "data": {
-        "uid": "296c53801cccf467a7afe4f10fc496e3",
-        "email": "mos@bth.se"
-    }
-}</pre>
+        <pre class="lager">204 No Content</pre>
 
         <h3>Delete project and associated files</h3>
         <pre class="lager">DELETE /projects</pre>
