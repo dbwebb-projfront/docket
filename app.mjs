@@ -93,8 +93,6 @@ io.on('connection', (socket) => {
     for(let file in fileUsers) {
       fileUsers[file] = fileUsers[file].filter((item) => item !== decoded.email)
     }
-  
-     io.to(uid).emit("users", fileUsers[uid])
   })
 
   socket.on("close file", (uid) => {
