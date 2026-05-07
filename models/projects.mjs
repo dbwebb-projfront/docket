@@ -94,7 +94,65 @@ export default {
       }}
     }
   },
+  
+  removeUserFromProject: async function removeUserFromProject(uid, removeEmail, email, apiKey) {
+    const db = await database.openDb()
 
+    try {
+      const project = await db.get(
+        `SELECT up.* FROM projects p 
+        INNER JOIN user_projects up ON p.uid = up.uid 
+        WHERE up.email = ? AND up.api_key = ? AND p.uid = ?`,
+        email,
+        apiKey,
+        uid,
+      )
+
+      if (project === undefined) {
+        return {
+          errors: {
+            status: 401,
+            title: "Not Authorized",
+            message: "You do not have access to this project.",
+          }
+        }
+      }
+
+      const user = await db.get(
+        `SELECT * FROM user_projects
+        WHERE email = ? AND api_key = ? AND uid = ?`,
+        removeEmail,
+        apiKey,
+        uid,
+      )
+
+      if (user === undefined) {
+        return {
+          message: `User ${removeEmail} not part of project`,
+          status: 200,
+        }
+      }
+
+      await db.run(
+        `DELETE FROM user_projects WHERE uid = ? AND email = ? AND api_key = ?`,
+        uid,
+        removeEmail,
+        apiKey,
+      )
+
+      return {
+        data: "ok"
+      }
+    } catch(error) {
+      return {
+        errors: {
+          status: 500,
+          message: error.message,
+        }
+      }
+    }
+  },
+    
   addUserToProject: async function addUserToProject(uid, newEmail, email, apiKey) {
     const db = await database.openDb()
 
@@ -128,7 +186,7 @@ export default {
 
       if (user) {
         return {
-          message: "User already part of project.",
+          message: `User ${newEmail} already part of project.`,
           status: 200,
         }
       }
@@ -159,7 +217,7 @@ export default {
       const project = await db.get(
         `SELECT up.* FROM projects p 
         INNER JOIN user_projects up ON p.uid = up.uid 
-        WHERE up.email = ? AND up.api_key = ? AND p.uid = ?`,
+        WHERE up.email = ? AND up.apreq.user.email, req.user.api_key)i_key = ? AND p.uid = ?`,
         email,
         apiKey,
         uid,
