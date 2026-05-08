@@ -217,7 +217,7 @@ export default {
       const project = await db.get(
         `SELECT up.* FROM projects p 
         INNER JOIN user_projects up ON p.uid = up.uid 
-        WHERE up.email = ? AND up.apreq.user.email, req.user.api_key)i_key = ? AND p.uid = ?`,
+        WHERE up.email = ? AND up.api_key = ? AND p.uid = ?`,
         email,
         apiKey,
         uid,
