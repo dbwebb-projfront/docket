@@ -57,8 +57,10 @@ app.get('/', (req, res) => res.redirect('/documentation.html'))
 // Socket handling
 io.use((socket, next) => {
   const token = socket.handshake.auth.token
+  const decoded = verifyToken(token)
   
-  if (verifyToken(token)) {
+  if (decoded) {
+    socket.data.user = decoded
     next()
   } else {
     next(new Error("Token is not valid."))
@@ -68,9 +70,9 @@ io.use((socket, next) => {
 
 io.on('connection', (socket) => {
   socket.on("open file", async (uid) => {
-    const decoded = verifyToken(socket.handshake.auth.token)
+    const { user } = socket.data
 
-    const hasAccess = await filesModel.checkFileAccess(uid, decoded.email, decoded.api_key)
+    const hasAccess = await filesModel.checkFileAccess(uid, user.email, user.api_key)
 
     if (hasAccess) {
       socket.join(uid)
@@ -81,24 +83,24 @@ io.on('connection', (socket) => {
         fileUsers[uid] = []
       }
 
-      fileUsers[uid].push(decoded.email)
+      fileUsers[uid].push(user.email)
 
       io.to(uid).emit("users", fileUsers[uid])
     }      
   })
 
   socket.on("disconnect", () => {
-    const decoded = verifyToken(socket.handshake.auth.token)
+    const { user } = socket.data
      
     for(let file in fileUsers) {
-      fileUsers[file] = fileUsers[file].filter((item) => item !== decoded.email)
+      fileUsers[file] = fileUsers[file].filter((item) => item !== user.email)
     }
   })
 
   socket.on("close file", (uid) => {
-    const decoded = verifyToken(socket.handshake.auth.token)
+    const { user } = socket.data
 
-    fileUsers[uid] = fileUsers[uid].filter((item) => item !== decoded.email)
+    fileUsers[uid] = fileUsers[uid].filter((item) => item !== user.email)
 
      io.to(uid).emit("users", fileUsers[uid])
   })
@@ -108,8 +110,8 @@ io.on('connection', (socket) => {
 
     clearTimeout(throttleTimeout)
     throttleTimeout = setTimeout(async () => {
-      const decoded = verifyToken(socket.handshake.auth.token)
-      const result = await filesModel.updateFileContent(data.uid, data.content, decoded.email, decoded.api_key)
+      const { user } = socket.data
+      const result = await filesModel.updateFileContent(data.uid, data.content, user.email, user.api_key)
 
       if (result) {
         io.to(data.uid).emit("content saved", data)
