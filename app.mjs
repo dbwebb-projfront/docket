@@ -2,6 +2,7 @@ import 'dotenv/config'
 
 import express from 'express'
 import { createServer } from 'node:http'
+import { pathToFileURL } from 'node:url'
 import bodyParser from 'body-parser'
 import path from 'path'
 import cors from 'cors'
@@ -124,4 +125,10 @@ io.on('connection', (socket) => {
   })
 })
 
-server.listen(port, () => console.log('Order api listening on port ' + port))
+const isMainModule = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href
+
+if (isMainModule) {
+  server.listen(port, () => console.log('Order api listening on port ' + port))
+}
+
+export { app, server, io }

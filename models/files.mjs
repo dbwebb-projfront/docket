@@ -108,7 +108,7 @@ const auth = {
   },
 
   updateFileContent: async function updateFileContent(fileUID, content, email, apiKey) {
-    if (auth.checkFileAccess(fileUID, email, apiKey)) {
+    if (await auth.checkFileAccess(fileUID, email, apiKey)) {
       const db = await database.openDb()
 
       try {
@@ -129,7 +129,7 @@ const auth = {
   },
 
   deleteFile: async function deleteFile(uid, email, apiKey) {
-    if (auth.checkFileAccess(uid, email, apiKey)) {
+    if (await auth.checkFileAccess(uid, email, apiKey)) {
       const db = await database.openDb()
 
       try {
