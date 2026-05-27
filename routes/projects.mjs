@@ -66,7 +66,7 @@ router.delete("/remove_user",
       return res.status(results.errors.status || 500).json({ data: results })
     }
 
-    return res.status(results.status || 204).send()
+    return res.status(results.status || 200).json({ data: results })
   }
 )
 

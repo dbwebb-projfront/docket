@@ -150,7 +150,7 @@ test('project lifecycle endpoints create, add user, remove user, and delete', as
     { email: 'mos@bth.se' },
   ])
 
-  const removedUser = await fetch(`${baseUrl}/projects/remove_user`, {
+  const removedUser = await requestJson('/projects/remove_user', {
     method: 'DELETE',
     headers: jsonHeaders(ownerToken),
     body: JSON.stringify({
@@ -159,13 +159,33 @@ test('project lifecycle endpoints create, add user, remove user, and delete', as
     }),
   })
 
-  assert.equal(removedUser.status, 204)
+  assert.equal(removedUser.response.status, 200)
+  assert.deepEqual(removedUser.body.data, {
+    message: 'User mos@bth.se removed from project',
+    removed: true,
+  })
 
   const projectWithoutUser = await requestJson(`/projects/${projectUid}`, {
     headers: authHeaders(ownerToken),
   })
 
   assert.deepEqual(projectWithoutUser.body.data.users, [{ email: primaryUser.email }])
+
+  const missingUserRemoval = await requestJson('/projects/remove_user', {
+    method: 'DELETE',
+    headers: jsonHeaders(ownerToken),
+    body: JSON.stringify({
+      uid: projectUid,
+      email: 'mos@bth.se',
+    }),
+  })
+
+  assert.equal(missingUserRemoval.response.status, 200)
+  assert.deepEqual(missingUserRemoval.body.data, {
+    message: 'User mos@bth.se not part of project',
+    removed: false,
+    status: 200,
+  })
 
   const deletedProject = await fetch(`${baseUrl}/projects`, {
     method: 'DELETE',

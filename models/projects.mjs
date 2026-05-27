@@ -129,6 +129,7 @@ export default {
       if (user === undefined) {
         return {
           message: `User ${removeEmail} not part of project`,
+          removed: false,
           status: 200,
         }
       }
@@ -141,7 +142,8 @@ export default {
       )
 
       return {
-        data: "ok"
+        message: `User ${removeEmail} removed from project`,
+        removed: true,
       }
     } catch(error) {
       return {
